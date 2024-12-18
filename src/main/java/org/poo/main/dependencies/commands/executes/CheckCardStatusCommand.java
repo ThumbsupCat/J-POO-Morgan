@@ -24,6 +24,7 @@ public class CheckCardStatusCommand implements Command {
     public void execute(final CommandInput input, final ArrayList<User> users,
                         final ArrayList<ExchangeRate> exchangeRates,
                         final ArrayList<Commerciant> commerciants) {
+        boolean found = false;
         for (User user : users) {
             for (Account account : user.getAccounts()) {
                 for (Card card : account.getCards()) {
@@ -34,18 +35,20 @@ public class CheckCardStatusCommand implements Command {
                                             + " the card will be frozen"));
                             card.setStatus("frozen");
                         }
-                    } else {
-                        ObjectNode node = objectMapper.createObjectNode();
-                        node.put("command", "checkCardStatus");
-                        ObjectNode outputNode = objectMapper.createObjectNode();
-                        outputNode.put("description", "Card not found");
-                        outputNode.put("timestamp", input.getTimestamp());
-                        node.set("output", outputNode);
-                        node.put("timestamp", input.getTimestamp());
-                        output.add(node);
+                        found = true;
                     }
                 }
             }
+        }
+        if (!found) {
+            ObjectNode node = objectMapper.createObjectNode();
+            node.put("command", "checkCardStatus");
+            ObjectNode outputNode = objectMapper.createObjectNode();
+            outputNode.put("description", "Card not found");
+            outputNode.put("timestamp", input.getTimestamp());
+            node.set("output", outputNode);
+            node.put("timestamp", input.getTimestamp());
+            output.add(node);
         }
     }
 }

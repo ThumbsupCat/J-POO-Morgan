@@ -62,7 +62,7 @@ public class SendMoneyCommand implements Command {
             receiver.getTransactions().add(new MoneySendTransaction(
                     input.getTimestamp(), input.getDescription(),
                     sender.getIBAN(), receiver.getIBAN(),
-                    input.getAmount(), sender.getCurrency(), "received"));
+                    convertedAmount, receiver.getCurrency(), "received"));
 
         } else {
             userSender.getTransactions().add(

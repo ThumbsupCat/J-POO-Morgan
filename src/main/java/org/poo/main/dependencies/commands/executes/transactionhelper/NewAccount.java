@@ -18,4 +18,7 @@ public class NewAccount implements TransactionHelper {
         node.put("description", description);
         return node;
     }
+    public boolean matchesType(final String type) {
+        return "NewAccount".contentEquals(type);
+    }
 }

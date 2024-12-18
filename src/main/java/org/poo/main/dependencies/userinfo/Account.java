@@ -2,6 +2,7 @@ package org.poo.main.dependencies.userinfo;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.poo.main.dependencies.Commerciant;
 import org.poo.main.dependencies.commands.executes.transactionhelper.TransactionHelper;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class Account {
     @Getter @Setter private double interestRate;
     @Getter @Setter private double minBalance;
     @Getter @Setter private ArrayList<TransactionHelper> transactions;
+    @Getter @Setter private ArrayList<Commerciant> commerciants;
     @Getter @Setter private String alias;
 
     public Account(final String iBAN, final String currency, final String type) {
@@ -27,6 +29,7 @@ public class Account {
         this.cards = new ArrayList<>();
         this.minBalance = minBalanceInitial;
         this.transactions = new ArrayList<>();
+        this.commerciants = new ArrayList<>();
         this.alias = null;
     }
 
@@ -40,6 +43,7 @@ public class Account {
         this.interestRate = interestRate;
         this.cards = new ArrayList<>();
         this.transactions = new ArrayList<>();
+        this.commerciants = new ArrayList<>();
         this.minBalance = minBalanceInitial;
         this.alias = null;
     }

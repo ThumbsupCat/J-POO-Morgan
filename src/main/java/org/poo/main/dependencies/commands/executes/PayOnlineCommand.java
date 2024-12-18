@@ -42,7 +42,6 @@ public class PayOnlineCommand implements Command {
                             } else {
                                 convertedAmount = input.getAmount();
                             }
-                            System.out.println(convertedAmount);
                             if (account.getBalance() >= convertedAmount && card.getStatus().contentEquals("active")) {
                                 account.setBalance(account.getBalance() - convertedAmount);
                                 user.getTransactions().add(
@@ -55,12 +54,27 @@ public class PayOnlineCommand implements Command {
                                 if (card.isOneTime()) {
                                     Card newCard = new Card(
                                             Utils.generateCardNumber(), "active", true);
-                                    user.getTransactions().add(new NewCard(
-                                            account.getIBAN(), card.getCardNumber(),
-                                            user.getEmail(), "The card has been destroyed",
-                                            input.getTimestamp()));
+                                    user.getTransactions().add(
+                                            new NewCard(account.getIBAN(), card.getCardNumber(),
+                                                    user.getEmail(), "The card has been destroyed",
+                                                    input.getTimestamp()));
+                                    user.getTransactions().add(
+                                            new NewCard(account.getIBAN(), newCard.getCardNumber(),
+                                                    user.getEmail(), "New card created",
+                                                    input.getTimestamp()));
                                     account.getCards().remove(card);
                                     account.getCards().add(newCard);
+                                }
+                                boolean foundCommerciant = false;
+                                for (Commerciant commerciant : account.getCommerciants()) {
+                                    if (commerciant.getName().contentEquals(input.getCommerciant())) {
+                                        foundCommerciant = true;
+                                        commerciant.setAmount(commerciant.getAmount() + convertedAmount);
+                                    }
+                                }
+                                if (!foundCommerciant) {
+                                    account.getCommerciants().add(
+                                            new Commerciant(input.getCommerciant(), convertedAmount));
                                 }
                                 card.cardStatusUpdate(account);
                             } else {

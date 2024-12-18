@@ -15,14 +15,21 @@ public class DeleteCardCommand implements Command {
     public void execute(final CommandInput input, final ArrayList<User> users,
                         final ArrayList<ExchangeRate> exchangeRates,
                         final ArrayList<Commerciant> commerciants) {
+        Card targetedCard = null;
         for (User user : users) {
             for (Account account : user.getAccounts()) {
-                account.getCards().removeIf(
-                        card -> card.getCardNumber().contentEquals(input.getCardNumber()));
-                user.getTransactions().add(
-                        new NewCard(account.getIBAN(), input.getCardNumber(),
-                                user.getEmail(), "The card has been destroyed",
-                                input.getTimestamp()));
+                for (Card card : account.getCards()) {
+                    if (card.getCardNumber().contentEquals(input.getCardNumber())) {
+                        user.getTransactions().add(
+                                new NewCard(account.getIBAN(), input.getCardNumber(),
+                                        user.getEmail(), "The card has been destroyed",
+                                        input.getTimestamp()));
+                        targetedCard = card;
+                    }
+                }
+                if (targetedCard != null) {
+                    account.getCards().remove(targetedCard);
+                }
             }
         }
     }

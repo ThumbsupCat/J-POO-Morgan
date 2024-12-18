@@ -7,6 +7,7 @@ import org.poo.fileio.CommandInput;
 import org.poo.main.dependencies.Commerciant;
 import org.poo.main.dependencies.ExchangeRate;
 import org.poo.main.dependencies.commands.Command;
+import org.poo.main.dependencies.commands.executes.transactionhelper.ErrorTransaction;
 import org.poo.main.dependencies.commands.executes.transactionhelper.TransactionHelper;
 import org.poo.main.dependencies.userinfo.Account;
 import org.poo.main.dependencies.userinfo.User;
@@ -23,6 +24,7 @@ public class ReportCommand implements Command {
     public void execute(final CommandInput input, final ArrayList<User> users,
                         final ArrayList<ExchangeRate> exchangeRates,
                         final ArrayList<Commerciant> commerciants) {
+        boolean found = false;
         for (final User user : users) {
             for (Account account : user.getAccounts()) {
                 if (account.getIBAN().contentEquals(input.getAccount())) {
@@ -44,8 +46,18 @@ public class ReportCommand implements Command {
                     node.set("output", accountNode);
                     node.put("timestamp", input.getTimestamp());
                     output.add(node);
+                    found = true;
+                    break;
                 }
             }
+        }
+        if (!found) {
+            ObjectNode node = mapper.createObjectNode();
+            node.put("command", "report");
+            node.set("output", new ErrorTransaction(
+                    input.getTimestamp(), "Account not found").printTransactions());
+            node.put("timestamp", input.getTimestamp());
+            output.add(node);
         }
     }
 }

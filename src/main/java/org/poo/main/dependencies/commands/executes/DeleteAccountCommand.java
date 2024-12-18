@@ -25,6 +25,7 @@ public class DeleteAccountCommand implements Command {
                         final ArrayList<Commerciant> commerciants) {
         boolean success = false;
         Account targetedAccount = null;
+        User targetedUser = null;
         for (final User user : users) {
             if (user.getEmail().contentEquals(input.getEmail())) {
                 for (Account account : user.getAccounts()) {
@@ -32,6 +33,8 @@ public class DeleteAccountCommand implements Command {
                         if (account.getBalance() == 0) {
                             targetedAccount = account;
                             success = true;
+                        } else {
+                            targetedUser = user;
                         }
                     }
                 }
@@ -43,6 +46,12 @@ public class DeleteAccountCommand implements Command {
         ObjectNode outputNode = mapper.createObjectNode();
         if (!success) {
             outputNode.put("error", "Account couldn't be deleted - see org.poo.transactions for details");
+            targetedUser.getTransactions().add(
+                    new DeleteAccountTransaction(
+                            "Account couldn't be deleted"
+                                    +
+                                    " - there are funds remaining",
+                            input.getTimestamp()));
         } else {
             outputNode.put("success", "Account deleted");
         }

@@ -6,6 +6,8 @@ import org.poo.fileio.ExchangeInput;
 
 import java.util.ArrayList;
 
+import static java.lang.Math.pow;
+
 public class ExchangeRate {
     @Getter @Setter private String from;
     @Getter @Setter private String to;
@@ -36,16 +38,17 @@ public class ExchangeRate {
                                         final String fromCurrency, final String toCurrency) {
         for (ExchangeRate rate1 : rates) {
             if (rate1.getFrom().contentEquals(fromCurrency) && rate1.getTo().contentEquals(toCurrency)) {
-                return amount * rate1.getRate();
+                return Math.ceil(amount * rate1.getRate() * pow(10, 15)) / pow(10, 15);
             }
         }
 
         for (ExchangeRate rate1 : rates) {
             if (rate1.getFrom().contentEquals(fromCurrency)) {
                 String inBetween = rate1.getTo();
+                double newAmount = amount * rate1.getRate();
                 for (ExchangeRate rate2 : rates) {
                     if (rate2.getFrom().contentEquals(inBetween) && rate2.getTo().contentEquals(toCurrency)) {
-                        return amount * rate1.getRate() * rate2.getRate();
+                        return Math.ceil(newAmount * rate2.getRate() * pow(10, 15)) / pow(10, 15);
                     }
                 }
             }

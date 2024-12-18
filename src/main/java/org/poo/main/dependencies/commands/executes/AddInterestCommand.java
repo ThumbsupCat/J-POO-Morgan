@@ -7,19 +7,17 @@ import org.poo.fileio.CommandInput;
 import org.poo.main.dependencies.Commerciant;
 import org.poo.main.dependencies.ExchangeRate;
 import org.poo.main.dependencies.commands.Command;
-import org.poo.main.dependencies.commands.executes.transactionhelper.ErrorTransaction;
 import org.poo.main.dependencies.userinfo.Account;
 import org.poo.main.dependencies.userinfo.User;
 
 import java.util.ArrayList;
 
-public class ChangeInterestRateCommand implements Command {
+public class AddInterestCommand implements Command {
     private ArrayNode output;
     private ObjectMapper mapper;
-
-    public ChangeInterestRateCommand(final ArrayNode output) {
-        this.output = output;
+    public AddInterestCommand(final ArrayNode output) {
         mapper = new ObjectMapper();
+        this.output = output;
     }
     public void execute(final CommandInput input, final ArrayList<User> users,
                         final ArrayList<ExchangeRate> exchangeRates,
@@ -28,19 +26,17 @@ public class ChangeInterestRateCommand implements Command {
         for (User user : users) {
             for (Account account : user.getAccounts()) {
                 if (account.getIBAN().contentEquals(input.getAccount()) && account.getType().equals("savings")) {
-                    account.setInterestRate(input.getInterestRate());
-                    user.getTransactions().add(
-                            new ErrorTransaction(input.getTimestamp(),
-                                    "Interest rate of the account changed to "
-                                            + input.getInterestRate()));
+                    account.setBalance(account.getBalance() + account.getBalance() * account.getInterestRate());
                     isSavingsAccount = true;
                 }
             }
         }
         if (!isSavingsAccount) {
             ObjectNode node = mapper.createObjectNode();
-            node.put("command", "changeInterestRate");
-            ObjectNode outputNode = new ErrorTransaction(input.getTimestamp(), "This is not a savings account").printTransactions();
+            node.put("command", "addInterest");
+            ObjectNode outputNode = mapper.createObjectNode();
+            outputNode.put("timestamp", input.getTimestamp());
+            outputNode.put("description", "This is not a savings account");
             node.set("output", outputNode);
             node.put("timestamp", input.getTimestamp());
             output.add(node);

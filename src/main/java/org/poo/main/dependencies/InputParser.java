@@ -30,11 +30,6 @@ public class InputParser {
             exchangeRates.add(new ExchangeRate(exchangeRate));
         }
         exchangeRates = addReverseRates(exchangeRates);
-        if (input.getCommerciants() != null) {
-            for (CommerciantInput commerciant : input.getCommerciants()) {
-            commerciants.add(new Commerciant(commerciant));
-            }
-        }
         InternalActivities bankActivities = new InternalActivities(
                 users, exchangeRates, commerciants, input.getCommands(), output);
         bankActivities.startActivities();

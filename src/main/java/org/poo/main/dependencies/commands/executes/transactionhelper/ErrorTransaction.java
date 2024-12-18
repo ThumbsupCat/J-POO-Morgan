@@ -14,12 +14,18 @@ public class ErrorTransaction implements TransactionHelper {
     }
     public ObjectNode printTransactions() {
         ObjectNode node = mapper.createObjectNode();
-        node.put("timestamp", timestamp);
-        if (!error.contentEquals("Insufficient funds") && !error.contains("frozen")) {
+        if (!error.contains("kind")) {
+            node.put("timestamp", timestamp);
+        }
+        if (!error.contains("funds") && !error.contains("frozen") && !error.contains("savings")
+                && !error.contains("not found") && !error.contains("changed")) {
             node.put("error", error);
         } else {
             node.put("description", error);
         }
         return node;
+    }
+    public boolean matchesType(final String type) {
+        return "ErrorTransaction".contentEquals(type);
     }
 }

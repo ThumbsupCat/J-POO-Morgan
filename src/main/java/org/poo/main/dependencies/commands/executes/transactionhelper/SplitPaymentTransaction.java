@@ -53,4 +53,7 @@ public class SplitPaymentTransaction implements TransactionHelper {
         }
         return node;
     }
+    public boolean matchesType(String type) {
+        return "SplitPaymentTransaction".contentEquals(type);
+    }
 }

@@ -24,4 +24,8 @@ public class PayOnlineTransaction implements TransactionHelper {
         node.put("timestamp", timestamp);
         return node;
     }
+
+    public boolean matchesType(final String type) {
+        return "PayOnlineTransaction".contentEquals(type);
+    }
 }

@@ -5,4 +5,5 @@ import lombok.Getter;
 
 public interface TransactionHelper {
     ObjectNode printTransactions();
+    boolean matchesType(String type);
 }

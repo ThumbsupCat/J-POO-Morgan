@@ -39,4 +39,7 @@ public class MoneySendTransaction implements TransactionHelper {
     public String toString() {
         return amount + " " + amountCurrency;
     }
+    public boolean matchesType(final String type) {
+        return "MoneySendTransaction".contentEquals(type);
+    }
 }

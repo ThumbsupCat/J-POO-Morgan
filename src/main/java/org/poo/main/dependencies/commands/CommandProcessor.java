@@ -40,10 +40,10 @@ public class CommandProcessor {
         commandClassMap.put("sendMoney", new SendMoneyCommand());
         commandClassMap.put("setAlias", new SetAliasCommand());
         commandClassMap.put("splitPayment", new SplitPaymentCommand());
-//        commandClassMap.put("addInterest", "AddInterestCommand");
-        commandClassMap.put("changeInterestRate", new ChangeInterestRateCommand());
+        commandClassMap.put("addInterest", new AddInterestCommand(output));
+        commandClassMap.put("changeInterestRate", new ChangeInterestRateCommand(output));
         commandClassMap.put("report", new ReportCommand(output));
-//        commandClassMap.put("spendingReport", "SpendingReportCommand");
+        commandClassMap.put("spendingsReport", new SpendingReportCommand(output));
     }
 
     public void process(final CommandInput command) {
