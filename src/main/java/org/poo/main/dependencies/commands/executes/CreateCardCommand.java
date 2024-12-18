@@ -32,6 +32,9 @@ public class CreateCardCommand implements Command {
                                 account.getIBAN(), newCard.getCardNumber(),
                                 user.getEmail(), "New card created",
                                 input.getTimestamp()));
+                        account.getTransactions().add(new NewCard(account.getIBAN(), newCard.getCardNumber(),
+                                user.getEmail(), "New card created",
+                                input.getTimestamp()));
                         account.getCards().add(newCard);
                     }
                 }

@@ -49,6 +49,9 @@ public class PayOnlineCommand implements Command {
                                         new PayOnlineTransaction(
                                                 convertedAmount, input.getCommerciant(),
                                                 "Card payment", input.getTimestamp()));
+                                account.getTransactions().add(new PayOnlineTransaction(
+                                        convertedAmount, input.getCommerciant(),
+                                        "Card payment", input.getTimestamp()));
                                 if (card.isOneTime()) {
                                     Card newCard = new Card(
                                             Utils.generateCardNumber(), "active", true);

@@ -33,6 +33,8 @@ public class AddAccountCommand implements Command {
                 user.getAccounts().add(newAccount);
                 user.getTransactions().add(
                         new NewAccount(input.getTimestamp(), "New account created"));
+                newAccount.getTransactions().add(
+                        new NewAccount(input.getTimestamp(), "New account created"));
             }
         }
     }

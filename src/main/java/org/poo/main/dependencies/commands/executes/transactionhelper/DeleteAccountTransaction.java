@@ -2,6 +2,7 @@ package org.poo.main.dependencies.commands.executes.transactionhelper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.Getter;
 
 public class DeleteAccountTransaction {
     /*
@@ -11,10 +12,10 @@ public class DeleteAccountTransaction {
     "timestamp" : 10
   }
      */
-    private String command;
-    private int timestamp;
-    private String description;
-    private ObjectMapper mapper;
+    private final String command;
+    private final int timestamp;
+    private final String description;
+    private final ObjectMapper mapper;
     public DeleteAccountTransaction(final String command, final int timestamp, final String description) {
         this.command = command;
         this.timestamp = timestamp;

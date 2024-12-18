@@ -51,13 +51,23 @@ public class SendMoneyCommand implements Command {
                     new MoneySendTransaction(input.getTimestamp(), input.getDescription(),
                     sender.getIBAN(), receiver.getIBAN(),
                     input.getAmount(), sender.getCurrency(), "sent"));
+            sender.getTransactions().add(new MoneySendTransaction(
+                    input.getTimestamp(), input.getDescription(),
+                    sender.getIBAN(), receiver.getIBAN(),
+                    input.getAmount(), sender.getCurrency(), "sent"));
             userReceiver.getTransactions().add(
                     new MoneySendTransaction(input.getTimestamp(), input.getDescription(),
                     sender.getIBAN(), receiver.getIBAN(),
                     convertedAmount, receiver.getCurrency(), "received"));
+            receiver.getTransactions().add(new MoneySendTransaction(
+                    input.getTimestamp(), input.getDescription(),
+                    sender.getIBAN(), receiver.getIBAN(),
+                    input.getAmount(), sender.getCurrency(), "received"));
 
         } else {
             userSender.getTransactions().add(
+                    new ErrorTransaction(input.getTimestamp(), "Insufficient funds"));
+            sender.getTransactions().add(
                     new ErrorTransaction(input.getTimestamp(), "Insufficient funds"));
         }
     }

@@ -39,10 +39,10 @@ public class CommandProcessor {
         commandClassMap.put("payOnline", new PayOnlineCommand(output));
         commandClassMap.put("sendMoney", new SendMoneyCommand());
         commandClassMap.put("setAlias", new SetAliasCommand());
-//        commandClassMap.put("splitPayment", "SplitPaymentCommand");
+        commandClassMap.put("splitPayment", new SplitPaymentCommand());
 //        commandClassMap.put("addInterest", "AddInterestCommand");
-//        commandClassMap.put("changeInterestRate", "ChangeInterestRateCommand");
-//        commandClassMap.put("report", "ReportCommand");
+        commandClassMap.put("changeInterestRate", new ChangeInterestRateCommand());
+        commandClassMap.put("report", new ReportCommand(output));
 //        commandClassMap.put("spendingReport", "SpendingReportCommand");
     }
 
