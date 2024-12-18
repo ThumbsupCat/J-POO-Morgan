@@ -4,6 +4,7 @@ import org.poo.fileio.CommandInput;
 import org.poo.main.dependencies.Commerciant;
 import org.poo.main.dependencies.ExchangeRate;
 import org.poo.main.dependencies.commands.Command;
+import org.poo.main.dependencies.commands.executes.transactionhelper.NewCard;
 import org.poo.main.dependencies.userinfo.Account;
 import org.poo.main.dependencies.userinfo.Card;
 import org.poo.main.dependencies.userinfo.User;
@@ -27,6 +28,10 @@ public class CreateCardCommand implements Command {
                         } else {
                             newCard = new Card(Utils.generateCardNumber(), "active");
                         }
+                        user.getTransactions().add(new NewCard(
+                                account.getIBAN(), newCard.getCardNumber(),
+                                user.getEmail(), "New card created",
+                                input.getTimestamp()));
                         account.getCards().add(newCard);
                     }
                 }

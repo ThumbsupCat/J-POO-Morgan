@@ -1,10 +1,10 @@
 package org.poo.main.dependencies.commands.executes;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.fileio.CommandInput;
 import org.poo.main.dependencies.Commerciant;
 import org.poo.main.dependencies.ExchangeRate;
 import org.poo.main.dependencies.commands.Command;
+import org.poo.main.dependencies.commands.executes.transactionhelper.NewAccount;
 import org.poo.main.dependencies.userinfo.Account;
 import org.poo.main.dependencies.userinfo.User;
 import org.poo.utils.Utils;
@@ -31,6 +31,8 @@ public class AddAccountCommand implements Command {
         for (User user : users) {
             if (user.getEmail().contentEquals(input.getEmail())) {
                 user.getAccounts().add(newAccount);
+                user.getTransactions().add(
+                        new NewAccount(input.getTimestamp(), "New account created"));
             }
         }
     }

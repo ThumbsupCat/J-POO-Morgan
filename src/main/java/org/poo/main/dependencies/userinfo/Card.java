@@ -16,4 +16,11 @@ public class Card {
         this.status = status;
         this.oneTime = oneTime;
     }
+    public void cardStatusUpdate(final Account account) {
+        if (account.getBalance() - account.getMinBalance() <= account.getMinBalanceInitial()) {
+            this.status = "warning";
+        } else if (account.getBalance() - account.getMinBalance() <= account.getMinBalance()) {
+            this.status = "frozen";
+        }
+    }
 }

@@ -7,6 +7,7 @@ import org.poo.fileio.CommandInput;
 import org.poo.main.dependencies.Commerciant;
 import org.poo.main.dependencies.ExchangeRate;
 import org.poo.main.dependencies.commands.Command;
+import org.poo.main.dependencies.commands.executes.transactionhelper.DeleteAccountTransaction;
 import org.poo.main.dependencies.userinfo.Account;
 import org.poo.main.dependencies.userinfo.User;
 
@@ -22,15 +23,29 @@ public class DeleteAccountCommand implements Command {
     public void execute(final CommandInput input, final ArrayList<User> users,
                         final ArrayList<ExchangeRate> exchangeRates,
                         final ArrayList<Commerciant> commerciants) {
+        boolean success = false;
+        Account targetedAccount = null;
         for (final User user : users) {
             if (user.getEmail().contentEquals(input.getEmail())) {
-                user.getAccounts().removeIf(account -> account.getIBAN().contentEquals(input.getAccount()));
+                for (Account account : user.getAccounts()) {
+                    if (account.getIBAN().contentEquals(input.getAccount())) {
+                        if (account.getBalance() == 0) {
+                            targetedAccount = account;
+                            success = true;
+                        }
+                    }
+                }
             }
+            user.getAccounts().remove(targetedAccount);
         }
         ObjectNode node = mapper.createObjectNode();
         node.put("command", "deleteAccount");
         ObjectNode outputNode = mapper.createObjectNode();
-        outputNode.put("success", "Account deleted");
+        if (!success) {
+            outputNode.put("error", "Account couldn't be deleted - see org.poo.transactions for details");
+        } else {
+            outputNode.put("success", "Account deleted");
+        }
         outputNode.put("timestamp", input.getTimestamp());
         node.set("output", outputNode);
         node.put("timestamp", input.getTimestamp());

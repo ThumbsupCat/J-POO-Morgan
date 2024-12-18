@@ -7,6 +7,9 @@ import org.poo.fileio.CommandInput;
 import org.poo.main.dependencies.Commerciant;
 import org.poo.main.dependencies.ExchangeRate;
 import org.poo.main.dependencies.commands.Command;
+import org.poo.main.dependencies.commands.executes.transactionhelper.ErrorTransaction;
+import org.poo.main.dependencies.commands.executes.transactionhelper.NewCard;
+import org.poo.main.dependencies.commands.executes.transactionhelper.PayOnlineTransaction;
 import org.poo.main.dependencies.userinfo.Account;
 import org.poo.main.dependencies.userinfo.Card;
 import org.poo.main.dependencies.userinfo.User;
@@ -26,7 +29,6 @@ public class PayOnlineCommand implements Command {
     public void execute(final CommandInput input, final ArrayList<User> users,
                         final ArrayList<ExchangeRate> exchangeRates,
                         final ArrayList<Commerciant> commerciants) {
-        //De adaugat in tranzactii mai tarziu
         boolean found = false;
         for (final User user : users) {
             if (user.getEmail().contentEquals(input.getEmail())) {
@@ -41,14 +43,32 @@ public class PayOnlineCommand implements Command {
                                 convertedAmount = input.getAmount();
                             }
                             System.out.println(convertedAmount);
-                            if (account.getBalance() >= convertedAmount) {
+                            if (account.getBalance() >= convertedAmount && card.getStatus().contentEquals("active")) {
                                 account.setBalance(account.getBalance() - convertedAmount);
+                                user.getTransactions().add(
+                                        new PayOnlineTransaction(
+                                                convertedAmount, input.getCommerciant(),
+                                                "Card payment", input.getTimestamp()));
                                 if (card.isOneTime()) {
                                     Card newCard = new Card(
                                             Utils.generateCardNumber(), "active", true);
+                                    user.getTransactions().add(new NewCard(
+                                            account.getIBAN(), card.getCardNumber(),
+                                            user.getEmail(), "The card has been destroyed",
+                                            input.getTimestamp()));
                                     account.getCards().remove(card);
                                     account.getCards().add(newCard);
                                 }
+                                card.cardStatusUpdate(account);
+                            } else {
+                                String error = "";
+                                if (card.getStatus().contentEquals("frozen")) {
+                                    error = "The card is frozen";
+                                } else {
+                                    error = "Insufficient funds";
+                                }
+                                user.getTransactions().add(new ErrorTransaction(
+                                                input.getTimestamp(), error));
                             }
                         }
                     }

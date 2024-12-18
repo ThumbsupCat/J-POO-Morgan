@@ -6,23 +6,15 @@ import lombok.Setter;
 import java.util.ArrayList;
 
 public class Account {
-    /*
-
-      "IBAN" : "RO58POOB7344468893732422",
-      "balance" : 0.0,
-      "currency" : "USD",
-      "type" : "classic",
-      "cards" : [ {
-        "cardNumber" : "8207906978464446",
-        "status" : "active"
-
-     */
+    @Getter private final double minBalanceInitial = 30;
     @Getter @Setter private String iBAN;
     @Getter @Setter private double balance;
     @Getter @Setter private String currency;
     @Getter @Setter private String type;
     @Getter @Setter private ArrayList<Card> cards;
     @Getter @Setter private double interestRate;
+    @Getter @Setter private double minBalance;
+    @Getter @Setter private String alias;
 
     public Account(final String iBAN, final String currency, final String type) {
         this.iBAN = iBAN;
@@ -30,6 +22,8 @@ public class Account {
         this.currency = currency;
         this.type = type;
         this.cards = new ArrayList<>();
+        this.minBalance = minBalanceInitial;
+        this.alias = null;
     }
 
     public Account(final String iBAN,
@@ -41,5 +35,7 @@ public class Account {
         this.type = type;
         this.interestRate = interestRate;
         this.cards = new ArrayList<>();
+        this.minBalance = minBalanceInitial;
+        this.alias = null;
     }
 }
