@@ -1,7 +1,6 @@
 package org.poo.main.dependencies.commands.executes;
 
 import org.poo.fileio.CommandInput;
-import org.poo.main.dependencies.Commerciant;
 import org.poo.main.dependencies.ExchangeRate;
 import org.poo.main.dependencies.commands.Command;
 import org.poo.main.dependencies.commands.executes.transactionhelper.ErrorTransaction;
@@ -9,14 +8,24 @@ import org.poo.main.dependencies.commands.executes.transactionhelper.MoneySendTr
 import org.poo.main.dependencies.userinfo.Account;
 import org.poo.main.dependencies.userinfo.User;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static org.poo.main.dependencies.ExchangeRate.reverseConvert;
 
-public class SendMoneyCommand implements Command {
-    public void execute(final CommandInput input, final ArrayList<User> users,
-                        final ArrayList<ExchangeRate> exchangeRates,
-                        final ArrayList<Commerciant> commerciants) {
+public final class SendMoneyCommand implements Command {
+    /**
+     * Executes a money transfer operation between two accounts based on the provided input.
+     * Handles validation, currency conversion, and records the transaction details.
+     *
+     * @param input The command input containing transaction details such as sender account IBAN,
+     *              receiver account IBAN, amount, currency, description, and timestamp.
+     * @param users A list of users whose accounts are searched for
+     *              the sender and receiver accounts.
+     * @param exchangeRates A list of exchange rates used for currency conversion between the sender
+     *                      and receiver's account currencies, if applicable.
+     */
+    public void execute(final CommandInput input, final List<User> users,
+                        final List<ExchangeRate> exchangeRates) {
         Account sender = null;
         Account receiver = null;
         User userSender = null;
@@ -36,13 +45,15 @@ public class SendMoneyCommand implements Command {
         if (sender == null || receiver == null) {
             return;
         }
-        double convertedAmount = 0;
+        double convertedAmount;
         double senderBalance = sender.getBalance();
         if (sender.getCurrency().contentEquals(receiver.getCurrency())) {
             convertedAmount = input.getAmount();
         } else {
-            convertedAmount = reverseConvert(exchangeRates, input.getAmount(), sender.getCurrency(), receiver.getCurrency());
-            senderBalance = reverseConvert(exchangeRates, senderBalance, sender.getCurrency(), receiver.getCurrency());
+            convertedAmount = reverseConvert(
+                    exchangeRates, input.getAmount(), sender.getCurrency(), receiver.getCurrency());
+            senderBalance = reverseConvert(
+                    exchangeRates, senderBalance, sender.getCurrency(), receiver.getCurrency());
         }
         if (senderBalance >= convertedAmount) {
             sender.setBalance(sender.getBalance() - input.getAmount());

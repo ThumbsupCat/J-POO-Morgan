@@ -4,17 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class SplitPaymentTransaction implements TransactionHelper {
-    private int timestamp;
-    private String description;
-    private String currency;
-    private double amount;
-    private List<String> involvedAccounts;
+public final class SplitPaymentTransaction implements TransactionHelper {
+    private final int timestamp;
+    private final String description;
+    private final String currency;
+    private final double amount;
+    private final List<String> involvedAccounts;
     private String error;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public SplitPaymentTransaction(final int timestamp, final String description,
                                    final String currency, final double amount,
@@ -37,6 +36,15 @@ public class SplitPaymentTransaction implements TransactionHelper {
         this.error = error;
         mapper = new ObjectMapper();
     }
+
+    /**
+     * Constructs and returns an ObjectNode representing the transaction details
+     * for a split payment transaction. The ObjectNode includes the timestamp,
+     * description, currency, amount, involved accounts, and any error information
+     * associated with the transaction.
+     *
+     * @return an ObjectNode containing transaction details for a split payment
+     */
     public ObjectNode printTransactions() {
         ObjectNode node = mapper.createObjectNode();
         node.put("timestamp", timestamp);
@@ -53,7 +61,15 @@ public class SplitPaymentTransaction implements TransactionHelper {
         }
         return node;
     }
-    public boolean matchesType(String type) {
+
+    /**
+     * Checks if the given type matches the specific transaction type
+     * "SplitPaymentTransaction".
+     *
+     * @param type the string representing the type to be checked
+     * @return true if the type matches "SplitPaymentTransaction", false otherwise
+     */
+    public boolean matchesType(final String type) {
         return "SplitPaymentTransaction".contentEquals(type);
     }
 }

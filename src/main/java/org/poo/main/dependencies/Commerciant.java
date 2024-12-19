@@ -2,13 +2,12 @@ package org.poo.main.dependencies;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.poo.fileio.CommerciantInput;
 
-import java.util.List;
-
+@Getter @Setter
 public class Commerciant {
-    @Getter @Setter private String name;
-    @Getter @Setter private double amount;
+    // Used for Stage 2
+    private String name;
+    private double amount;
 
     public Commerciant(final String name, final double amount) {
         this.name = name;

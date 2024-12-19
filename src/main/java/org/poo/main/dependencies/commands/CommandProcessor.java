@@ -2,30 +2,40 @@ package org.poo.main.dependencies.commands;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.fileio.CommandInput;
-import org.poo.main.dependencies.Commerciant;
 import org.poo.main.dependencies.ExchangeRate;
-import org.poo.main.dependencies.commands.executes.*;
+import org.poo.main.dependencies.commands.executes.AddAccountCommand;
+import org.poo.main.dependencies.commands.executes.AddFundsCommand;
+import org.poo.main.dependencies.commands.executes.AddInterestCommand;
+import org.poo.main.dependencies.commands.executes.ChangeInterestRateCommand;
+import org.poo.main.dependencies.commands.executes.CheckCardStatusCommand;
+import org.poo.main.dependencies.commands.executes.CreateCardCommand;
+import org.poo.main.dependencies.commands.executes.DeleteAccountCommand;
+import org.poo.main.dependencies.commands.executes.DeleteCardCommand;
+import org.poo.main.dependencies.commands.executes.PayOnlineCommand;
+import org.poo.main.dependencies.commands.executes.PrintTransactionsCommand;
+import org.poo.main.dependencies.commands.executes.PrintUsersCommand;
+import org.poo.main.dependencies.commands.executes.ReportCommand;
+import org.poo.main.dependencies.commands.executes.SendMoneyCommand;
+import org.poo.main.dependencies.commands.executes.SetAliasCommand;
+import org.poo.main.dependencies.commands.executes.SetMinBalanceCommand;
+import org.poo.main.dependencies.commands.executes.SpendingReportCommand;
+import org.poo.main.dependencies.commands.executes.SplitPaymentCommand;
 import org.poo.main.dependencies.userinfo.User;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class CommandProcessor {
+public final class CommandProcessor {
     private final Map<String, Command> commandClassMap = new HashMap<>();
-    private final ArrayList<User> users;
-    private final ArrayList<ExchangeRate> exchangeRates;
-    private final ArrayList<Commerciant> commerciants;
-    private final ArrayNode output;
+    private final List<User> users;
+    private final List<ExchangeRate> exchangeRates;
 
-    public CommandProcessor(final ArrayList<User> users,
-                            final ArrayList<ExchangeRate> exchangeRate,
-                            final ArrayList<Commerciant> commerciants,
+    public CommandProcessor(final List<User> users,
+                            final List<ExchangeRate> exchangeRate,
                             final ArrayNode output) {
         this.users = users;
         this.exchangeRates = exchangeRate;
-        this.commerciants = commerciants;
-        this.output = output;
         commandClassMap.put("printUsers", new PrintUsersCommand(output));
         commandClassMap.put("printTransactions", new PrintTransactionsCommand(output));
         commandClassMap.put("addAccount", new AddAccountCommand());
@@ -46,6 +56,13 @@ public class CommandProcessor {
         commandClassMap.put("spendingsReport", new SpendingReportCommand(output));
     }
 
+    /**
+     * Processes a given command input by checking its validity
+     * and executing the corresponding command.
+     * <p>If the command is not recognized or is null, no action is performed.</p>
+     *
+     * @param command the input command to process
+     */
     public void process(final CommandInput command) {
         String commandName = command.getCommand();
         if (commandName == null || !commandClassMap.containsKey(commandName)) {
@@ -53,9 +70,10 @@ public class CommandProcessor {
         }
         try {
             final Command commandClass = commandClassMap.get(commandName);
-            commandClass.execute(command, users, exchangeRates, commerciants);
+            commandClass.execute(command, users, exchangeRates);
         } catch (final Exception e) {
-            e.printStackTrace();
+            // This is must be used while developing
+            /*e.printStackTrace();*/
         }
     }
 }

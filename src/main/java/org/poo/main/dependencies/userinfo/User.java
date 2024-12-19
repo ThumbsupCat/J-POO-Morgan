@@ -6,13 +6,15 @@ import org.poo.fileio.UserInput;
 import org.poo.main.dependencies.commands.executes.transactionhelper.TransactionHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
+@Getter @Setter
 public class User {
-    @Getter @Setter private String firstName;
-    @Getter @Setter private String lastName;
-    @Getter @Setter private String email;
-    @Getter @Setter private ArrayList<Account> accounts;
-    @Getter @Setter private ArrayList<TransactionHelper> transactions;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private List<Account> accounts;
+    private List<TransactionHelper> transactions;
     public User(final UserInput user) {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();

@@ -4,26 +4,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.fileio.CommandInput;
-import org.poo.main.dependencies.Commerciant;
 import org.poo.main.dependencies.ExchangeRate;
 import org.poo.main.dependencies.commands.Command;
 import org.poo.main.dependencies.userinfo.Account;
 import org.poo.main.dependencies.userinfo.Card;
 import org.poo.main.dependencies.userinfo.User;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class PrintUsersCommand implements Command {
-    private ArrayNode output;
-    private ObjectMapper mapper;
+public final class PrintUsersCommand implements Command {
+    private final ArrayNode output;
+    private final ObjectMapper mapper;
     public PrintUsersCommand(final ArrayNode output) {
         this.output = output;
         mapper = new ObjectMapper();
     }
     @Override
-    public void execute(final CommandInput input, final ArrayList<User> users,
-                        final ArrayList<ExchangeRate> exchangeRates,
-                        final ArrayList<Commerciant> commerciants) {
+    public void execute(final CommandInput input, final List<User> users,
+                        final List<ExchangeRate> exchangeRates) {
         ObjectNode node = mapper.createObjectNode();
         node.put("command", input.getCommand());
         ArrayNode usersInfo = mapper.createArrayNode();

@@ -3,15 +3,13 @@ package org.poo.main.dependencies.commands.executes.transactionhelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class NewCard implements TransactionHelper{
-    //new NewCard(
-    //                                    account.getIBAN(), newCard.getCardNumber(), user.getEmail(), "New card created")
-    private String iban;
-    private String cardNumber;
-    private String email;
-    private String description;
-    private int timestamp;
-    private ObjectMapper mapper;
+public final class NewCard implements TransactionHelper {
+    private final String iban;
+    private final String cardNumber;
+    private final String email;
+    private final String description;
+    private final int timestamp;
+    private final ObjectMapper mapper;
     public NewCard(final String iBAN, final String cardNumber,
                    final String email, final String description,
                    final int timestamp) {
@@ -22,6 +20,14 @@ public class NewCard implements TransactionHelper{
         this.timestamp = timestamp;
         mapper = new ObjectMapper();
     }
+
+    /**
+     * Constructs and returns an ObjectNode representing the transaction details
+     * for a new card. The ObjectNode contains the IBAN, card number, cardholder
+     * email, description, and timestamp associated with the transaction.
+     *
+     * @return an ObjectNode representing the transaction details
+     */
     public ObjectNode printTransactions() {
         ObjectNode node = mapper.createObjectNode();
         node.put("account", iban);
@@ -31,6 +37,13 @@ public class NewCard implements TransactionHelper{
         node.put("timestamp", timestamp);
         return node;
     }
+
+    /**
+     * Checks if the given type matches the specific transaction type "NewCard".
+     *
+     * @param type the string representing the type to be checked
+     * @return true if the type matches "NewCard", false otherwise
+     */
     public boolean matchesType(final String type) {
         return "NewCard".contentEquals(type);
     }
