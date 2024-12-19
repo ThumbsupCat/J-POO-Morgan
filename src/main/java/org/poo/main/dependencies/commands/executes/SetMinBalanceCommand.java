@@ -26,6 +26,9 @@ public final class SetMinBalanceCommand implements Command {
         for (User user : users) {
             for (Account account : user.getAccounts()) {
                 if (account.getIBAN().contentEquals(input.getAccount())) {
+                    /*
+                    *   Setting the new minBalance of the selected account with the input
+                    */
                     account.setMinBalance(input.getAmount());
                 }
             }

@@ -10,6 +10,7 @@ public interface Command {
     /**
      * Executes the specific operations defined by the command using the provided input data,
      * user information, and exchange rate details.
+     * <p><b>Command Pattern</b></p>
      *
      * @param input          the command input containing operation-specific details such as
      *                       command type, user email, account information, and other parameters.

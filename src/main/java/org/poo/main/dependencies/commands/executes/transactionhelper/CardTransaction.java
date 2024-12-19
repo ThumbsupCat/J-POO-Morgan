@@ -3,16 +3,16 @@ package org.poo.main.dependencies.commands.executes.transactionhelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public final class NewCard implements TransactionHelper {
+public final class CardTransaction implements TransactionHelper {
     private final String iban;
     private final String cardNumber;
     private final String email;
     private final String description;
     private final int timestamp;
     private final ObjectMapper mapper;
-    public NewCard(final String iBAN, final String cardNumber,
-                   final String email, final String description,
-                   final int timestamp) {
+    public CardTransaction(final String iBAN, final String cardNumber,
+                           final String email, final String description,
+                           final int timestamp) {
         this.iban = iBAN;
         this.cardNumber = cardNumber;
         this.email = email;
@@ -39,12 +39,12 @@ public final class NewCard implements TransactionHelper {
     }
 
     /**
-     * Checks if the given type matches the specific transaction type "NewCard".
+     * Checks if the given type matches the specific transaction type "CardTransaction".
      *
      * @param type the string representing the type to be checked
-     * @return true if the type matches "NewCard", false otherwise
+     * @return true if the type matches "CardTransaction", false otherwise
      */
     public boolean matchesType(final String type) {
-        return "NewCard".contentEquals(type);
+        return "CardTransaction".contentEquals(type);
     }
 }

@@ -39,10 +39,15 @@ public final class DeleteAccountCommand implements Command {
             if (user.getEmail().contentEquals(input.getEmail())) {
                 for (Account account : user.getAccounts()) {
                     if (account.getIBAN().contentEquals(input.getAccount())) {
+                        /* Account to be deleted, found!
+                        Checking the balance */
                         if (account.getBalance() == 0) {
+                            /* The deletion can take place */
                             targetedAccount = account;
                             success = true;
                         } else {
+                            /* Account can't be deleted due to having a positive balance */
+                            /* Keeping the user to add the error into the transaction list */
                             targetedUser = user;
                         }
                     }
@@ -50,15 +55,19 @@ public final class DeleteAccountCommand implements Command {
             }
             user.getAccounts().remove(targetedAccount);
         }
+        /* Output can be either an error, or a success notice.
+        Managing the output based on the booleans
+        */
         ObjectNode node = mapper.createObjectNode();
         node.put("command", "deleteAccount");
         ObjectNode outputNode = mapper.createObjectNode();
-        if (!success) {
+        if (!success) { /* Error message, there are still funds remaining */
             outputNode.put(
                     "error", "Account couldn't be deleted - see org.poo.transactions for details"
             );
             if (targetedUser != null) {
-                // Defensive programming
+                /* Defensive programming */
+                /* Adding the transaction error to the user as well */
                 targetedUser.getTransactions().add(
                         new DeleteAccountTransaction(
                                 "Account couldn't be deleted"

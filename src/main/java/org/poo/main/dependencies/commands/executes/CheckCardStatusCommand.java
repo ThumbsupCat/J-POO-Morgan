@@ -43,6 +43,9 @@ public final class CheckCardStatusCommand implements Command {
                     if (card.getCardNumber().contentEquals(input.getCardNumber())) {
                         if (account.getBalance() - account.getMinBalance()
                                 <= account.getMinBalance()) {
+                            /* The card gets frozen due to not respecting the base condition
+                               and adding the output in the user transactions
+                            */
                             user.getTransactions().add(new ErrorTransaction(input.getTimestamp(),
                                     "You have reached the minimum amount of funds,"
                                             + " the card will be frozen")
@@ -55,6 +58,7 @@ public final class CheckCardStatusCommand implements Command {
             }
         }
         if (!found) {
+            /* Printing the error in the output */
             ObjectNode node = objectMapper.createObjectNode();
             node.put("command", "checkCardStatus");
             ObjectNode outputNode = objectMapper.createObjectNode();

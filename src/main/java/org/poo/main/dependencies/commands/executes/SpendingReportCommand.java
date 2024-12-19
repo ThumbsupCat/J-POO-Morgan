@@ -48,23 +48,35 @@ public final class SpendingReportCommand implements Command {
                     if (!account.getType().equals("savings")) {
                         ObjectNode reportNode = mapper.createObjectNode();
                         reportNode.put("command", "spendingsReport");
-
                         ObjectNode outputNode = mapper.createObjectNode();
                         outputNode.put("balance", account.getBalance());
                         outputNode.put("currency", account.getCurrency());
                         outputNode.put("IBAN", account.getIBAN());
-
+                        /*
+                        *   - In need of a new transaction array, we make it directly for this case
+                        *   - Also, to remember the commerciants involved in that timeframe
+                        */
                         ArrayNode transactionsArray = mapper.createArrayNode();
                         Map<String, Double> commerciantTotals = new HashMap<>();
 
                         for (TransactionHelper transaction : account.getTransactions()) {
                             if (transaction.matchesType("PayOnlineTransaction")) {
+                                /*
+                                *   I chose this approach to check the type of transaction
+                                *   Can be rewritten as a transaction list that registers only
+                                *   this type of transaction for each account
+                                *   I did a quick fix, don't judge
+                                */
                                 ObjectNode transactionNode = transaction.printTransactions();
                                 int transactionTimestamp = transactionNode.get("timestamp").asInt();
 
                                 if (transactionTimestamp >= input.getStartTimestamp()
                                         && transactionTimestamp <= input.getEndTimestamp()) {
-
+                                    /*
+                                    *   Adding the transactionNode to the ArrayNode, creating
+                                    *   a new map pair if the commerciant is not there else,
+                                    *   we just add the amount to the value of the specific pair
+                                    */
                                     transactionsArray.add(transactionNode);
 
                                     String commerciantName =
@@ -78,6 +90,9 @@ public final class SpendingReportCommand implements Command {
                                 }
                             }
                         }
+                        /*
+                        *   Creating and adding the commerciants array into the output
+                        */
                         ArrayNode commerciantsArray = mapper.createArrayNode();
                         commerciantTotals.entrySet().stream()
                                 .sorted(Map.Entry.comparingByKey()) // Sort by commerciant name
@@ -94,6 +109,9 @@ public final class SpendingReportCommand implements Command {
                         reportNode.put("timestamp", input.getTimestamp());
                         output.add(reportNode);
                     } else {
+                        /*
+                        *   Keeping the error message, there are 2 error messages that can be
+                        */
                         accountFound = false;
                         error = "This kind of report is not supported for a saving account";
                     }
@@ -101,6 +119,9 @@ public final class SpendingReportCommand implements Command {
             }
         }
         if (!accountFound) {
+            /*
+            *   Adding the error node into the output
+            */
             ObjectNode node = mapper.createObjectNode();
             node.put("command", "spendingsReport");
             node.set("output", new ErrorTransaction(

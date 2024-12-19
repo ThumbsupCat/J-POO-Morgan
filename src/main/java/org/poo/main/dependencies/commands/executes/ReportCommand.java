@@ -42,6 +42,9 @@ public final class ReportCommand implements Command {
         for (final User user : users) {
             for (Account account : user.getAccounts()) {
                 if (account.getIBAN().contentEquals(input.getAccount())) {
+                    /*
+                    *  Building the output node for the command call
+                    */
                     ObjectNode node = mapper.createObjectNode();
                     node.put("command", "report");
                     ObjectNode accountNode = mapper.createObjectNode();
@@ -49,6 +52,10 @@ public final class ReportCommand implements Command {
                     accountNode.put("currency", account.getCurrency());
                     accountNode.put("IBAN", account.getIBAN());
                     ArrayNode transactionsNode = mapper.createArrayNode();
+                    /*
+                    *  Going through every transaction in which the account was involved
+                    *  and adding it to the output
+                    */
                     for (TransactionHelper transaction : account.getTransactions()) {
                         int timestamp = transaction.printTransactions().get("timestamp").asInt();
                         if (timestamp >= input.getStartTimestamp()
@@ -66,6 +73,7 @@ public final class ReportCommand implements Command {
             }
         }
         if (!found) {
+            /* Showing an error in the output for the failed command */
             ObjectNode node = mapper.createObjectNode();
             node.put("command", "report");
             node.set("output", new ErrorTransaction(

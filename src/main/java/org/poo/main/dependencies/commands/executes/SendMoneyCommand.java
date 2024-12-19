@@ -30,6 +30,9 @@ public final class SendMoneyCommand implements Command {
         Account receiver = null;
         User userSender = null;
         User userReceiver = null;
+        /*
+        *   Assigning the sender and receiver information to be used in the transfer
+        */
         for (User user : users) {
             for (Account account : user.getAccounts()) {
                 if (account.getIBAN().contentEquals(input.getAccount())) {
@@ -42,44 +45,86 @@ public final class SendMoneyCommand implements Command {
                 }
             }
         }
+        /*
+        *   Defensive programming, we do not continue
+        */
         if (sender == null || receiver == null) {
             return;
         }
         double convertedAmount;
         double senderBalance = sender.getBalance();
         if (sender.getCurrency().contentEquals(receiver.getCurrency())) {
-            convertedAmount = input.getAmount();
+            convertedAmount = input.getAmount(); /* no need to convert */
         } else {
+            /*
+            *   Need to convert the amount for the receiver
+            */
             convertedAmount = reverseConvert(
                     exchangeRates, input.getAmount(), sender.getCurrency(), receiver.getCurrency());
-            senderBalance = reverseConvert(
-                    exchangeRates, senderBalance, sender.getCurrency(), receiver.getCurrency());
         }
-        if (senderBalance >= convertedAmount) {
+        if (sender.getBalance() >= input.getAmount()) {
             sender.setBalance(sender.getBalance() - input.getAmount());
+            /*
+            *   Logging the transaction in their respective accounts/users' details
+            */
             receiver.setBalance(receiver.getBalance() + convertedAmount);
             userSender.getTransactions().add(
-                    new MoneySendTransaction(input.getTimestamp(), input.getDescription(),
-                    sender.getIBAN(), receiver.getIBAN(),
-                    input.getAmount(), sender.getCurrency(), "sent"));
-            sender.getTransactions().add(new MoneySendTransaction(
-                    input.getTimestamp(), input.getDescription(),
-                    sender.getIBAN(), receiver.getIBAN(),
-                    input.getAmount(), sender.getCurrency(), "sent"));
+                    new MoneySendTransaction(
+                            input.getTimestamp(),
+                            input.getDescription(),
+                            sender.getIBAN(),
+                            receiver.getIBAN(),
+                            input.getAmount(),
+                            sender.getCurrency(),
+                            "sent"
+                    )
+            );
+            sender.getTransactions().add(
+                    new MoneySendTransaction(
+                        input.getTimestamp(),
+                        input.getDescription(),
+                        sender.getIBAN(),
+                        receiver.getIBAN(),
+                        input.getAmount(),
+                        sender.getCurrency(),
+                        "sent"
+                    )
+            );
             userReceiver.getTransactions().add(
-                    new MoneySendTransaction(input.getTimestamp(), input.getDescription(),
-                    sender.getIBAN(), receiver.getIBAN(),
-                    convertedAmount, receiver.getCurrency(), "received"));
+                    new MoneySendTransaction(
+                            input.getTimestamp(),
+                            input.getDescription(),
+                            sender.getIBAN(),
+                            receiver.getIBAN(),
+                            convertedAmount,
+                            receiver.getCurrency(),
+                            "received"
+                    )
+            );
             receiver.getTransactions().add(new MoneySendTransaction(
-                    input.getTimestamp(), input.getDescription(),
-                    sender.getIBAN(), receiver.getIBAN(),
-                    convertedAmount, receiver.getCurrency(), "received"));
+                    input.getTimestamp(),
+                    input.getDescription(),
+                    sender.getIBAN(),
+                    receiver.getIBAN(),
+                    convertedAmount,
+                    receiver.getCurrency(),
+                    "received"
+                    )
+            );
 
         } else {
             userSender.getTransactions().add(
-                    new ErrorTransaction(input.getTimestamp(), "Insufficient funds"));
+                    new ErrorTransaction(
+                            input.getTimestamp(),
+                            "Insufficient funds"
+                    )
+            );
             sender.getTransactions().add(
-                    new ErrorTransaction(input.getTimestamp(), "Insufficient funds"));
+                    new ErrorTransaction(
+                            input.getTimestamp(),
+                            "Insufficient funds"
+                    )
+            );
         }
     }
 }

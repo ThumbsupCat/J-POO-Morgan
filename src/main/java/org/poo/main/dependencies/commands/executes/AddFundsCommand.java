@@ -23,9 +23,11 @@ public final class AddFundsCommand implements Command {
      */
     public void execute(final CommandInput input, final List<User> users,
                         final List<ExchangeRate> exchangeRates) {
+        /* Looking for account */
         for (User user : users) {
             for (Account account : user.getAccounts()) {
                 if (account.getIBAN().contentEquals(input.getAccount())) {
+                    /* Adding funds to the account */
                     account.setBalance(account.getBalance() + input.getAmount());
                 }
             }

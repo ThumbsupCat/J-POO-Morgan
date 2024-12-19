@@ -8,7 +8,7 @@ import org.poo.main.dependencies.Commerciant;
 import org.poo.main.dependencies.ExchangeRate;
 import org.poo.main.dependencies.commands.Command;
 import org.poo.main.dependencies.commands.executes.transactionhelper.ErrorTransaction;
-import org.poo.main.dependencies.commands.executes.transactionhelper.NewCard;
+import org.poo.main.dependencies.commands.executes.transactionhelper.CardTransaction;
 import org.poo.main.dependencies.commands.executes.transactionhelper.PayOnlineTransaction;
 import org.poo.main.dependencies.userinfo.Account;
 import org.poo.main.dependencies.userinfo.Card;
@@ -54,36 +54,73 @@ public final class PayOnlineCommand implements Command {
                             found = true;
                             double convertedAmount;
                             if (!input.getCurrency().contentEquals(account.getCurrency())) {
+                                /*
+                                *   The currency is not the same as the payer's currency, converting
+                                */
                                 convertedAmount = reverseConvert(
-                                        exchangeRates, input.getAmount(),
-                                        input.getCurrency(), account.getCurrency());
+                                        exchangeRates,
+                                        input.getAmount(),
+                                        input.getCurrency(),
+                                        account.getCurrency()
+                                );
                             } else {
                                 convertedAmount = input.getAmount();
                             }
                             if (account.getBalance() >= convertedAmount
                                     && card.getStatus().contentEquals("active")) {
+                                /*
+                                *   Deducting from the balance the amount
+                                *   Logging the transaction in the account/user details
+                                */
                                 account.setBalance(account.getBalance() - convertedAmount);
                                 user.getTransactions().add(
                                         new PayOnlineTransaction(
-                                                convertedAmount, input.getCommerciant(),
-                                                "Card payment", input.getTimestamp()));
-                                account.getTransactions().add(new PayOnlineTransaction(
-                                        convertedAmount, input.getCommerciant(),
-                                        "Card payment", input.getTimestamp()));
+                                                convertedAmount,
+                                                input.getCommerciant(),
+                                                "Card payment",
+                                                input.getTimestamp()
+                                        )
+                                );
+                                account.getTransactions().add(
+                                        new PayOnlineTransaction(
+                                            convertedAmount,
+                                            input.getCommerciant(),
+                                            "Card payment",
+                                            input.getTimestamp()
+                                        )
+                                );
                                 if (card.isOneTime()) {
+                                    /*
+                                    *   Replacing the one time card
+                                    *   Logging into the user/account transaction that
+                                    *   the card changed
+                                    */
                                     Card newCard = new Card(
                                             Utils.generateCardNumber(), "active", true);
                                     user.getTransactions().add(
-                                            new NewCard(account.getIBAN(), card.getCardNumber(),
-                                                    user.getEmail(), "The card has been destroyed",
-                                                    input.getTimestamp()));
+                                            new CardTransaction(
+                                                    account.getIBAN(),
+                                                    card.getCardNumber(),
+                                                    user.getEmail(),
+                                                    "The card has been destroyed",
+                                                    input.getTimestamp()
+                                            )
+                                    );
                                     user.getTransactions().add(
-                                            new NewCard(account.getIBAN(), newCard.getCardNumber(),
-                                                    user.getEmail(), "New card created",
-                                                    input.getTimestamp()));
+                                            new CardTransaction(
+                                                    account.getIBAN(),
+                                                    newCard.getCardNumber(),
+                                                    user.getEmail(),
+                                                    "New card created",
+                                                    input.getTimestamp()
+                                            )
+                                    );
                                     account.getCards().remove(card);
                                     account.getCards().add(newCard);
                                 }
+                                /*
+                                *   Keeping this commerciant related code, I may need it next stage
+                                */
                                 boolean foundCommerciant = false;
                                 for (Commerciant commerciant : account.getCommerciants()) {
                                     if (commerciant.getName().contentEquals(
@@ -99,16 +136,26 @@ public final class PayOnlineCommand implements Command {
                                                 input.getCommerciant(), convertedAmount)
                                     );
                                 }
+                                /*
+                                *   Placing the warning status if
+                                *   the balance doesn't meet the requirements
+                                */
                                 card.cardStatusUpdate(account);
                             } else {
+                                /*
+                                *   Adding the transaction error in user transactions
+                                */
                                 String error;
                                 if (card.getStatus().contentEquals("frozen")) {
                                     error = "The card is frozen";
                                 } else {
                                     error = "Insufficient funds";
                                 }
-                                user.getTransactions().add(new ErrorTransaction(
-                                                input.getTimestamp(), error)
+                                user.getTransactions().add(
+                                        new ErrorTransaction(
+                                                input.getTimestamp(),
+                                                error
+                                        )
                                 );
                             }
                         }
@@ -117,6 +164,9 @@ public final class PayOnlineCommand implements Command {
             }
         }
         if (!found) {
+            /*
+            *   The card was not found, creating node for output
+            */
             ObjectNode node = mapper.createObjectNode();
             node.put("command", input.getCommand());
             ObjectNode outputNode = mapper.createObjectNode();

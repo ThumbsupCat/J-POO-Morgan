@@ -38,14 +38,23 @@ public final class SplitPaymentCommand implements Command {
                 for (Account account : user.getAccounts()) {
                     if (account.getIBAN().contentEquals(accountString)) {
                         if (account.getCurrency().contentEquals(input.getCurrency())) {
+                            /*
+                            *   splitPay is in account's currency
+                            */
                             convertedAmount = splitPay;
                         } else {
+                            /*
+                            *   Converting the splitPay to the account's currency
+                            */
                             convertedAmount = reverseConvert(
-                                    exchangeRates, splitPay,
-                                    input.getCurrency(), account.getCurrency()
+                                    exchangeRates,
+                                    splitPay,
+                                    input.getCurrency(),
+                                    account.getCurrency()
                             );
                         }
                         if (account.getBalance() < convertedAmount) {
+                            /* Keeping the error message */
                                 error = "Account " + accountString
                                     + " has insufficient funds for a split payment.";
                         }
@@ -62,8 +71,10 @@ public final class SplitPaymentCommand implements Command {
                             convertedAmount = splitPay;
                         } else {
                             convertedAmount = reverseConvert(
-                                    exchangeRates, splitPay,
-                                    input.getCurrency(), account.getCurrency()
+                                    exchangeRates,
+                                    splitPay,
+                                    input.getCurrency(),
+                                    account.getCurrency()
                             );
                         }
                         account.setBalance(senderBalance - convertedAmount);
@@ -71,21 +82,43 @@ public final class SplitPaymentCommand implements Command {
                 }
             }
         }
+        /*
+        *   Regardless of the error (null / non-null), we can handle the output node
+        *   in the transaction helper
+        *   Also, logging the transaction regardless of the result
+        */
         for (User user : users) {
             for (Account account : user.getAccounts()) {
                 if (input.getAccounts().contains(account.getIBAN())) {
-                    user.getTransactions().add(new SplitPaymentTransaction(
-                            input.getTimestamp(), "Split payment of "
-                            + BigDecimal.valueOf(input.getAmount()).setScale(
-                                    2, RoundingMode.HALF_UP) + " " + input.getCurrency(),
-                            input.getCurrency(), splitPay,
-                            input.getAccounts(), error));
-                    account.getTransactions().add(new SplitPaymentTransaction(
-                            input.getTimestamp(), "Split payment of "
-                            + BigDecimal.valueOf(input.getAmount()).setScale(
-                            2, RoundingMode.HALF_UP) + " " + input.getCurrency(),
-                            input.getCurrency(), splitPay,
-                            input.getAccounts(), error));
+                    user.getTransactions().add(
+                            new SplitPaymentTransaction(
+                                input.getTimestamp(),
+                                "Split payment of "
+                                + BigDecimal.valueOf(
+                                    input.getAmount()).setScale(
+                                    2, RoundingMode.HALF_UP
+                                ) + " " + input.getCurrency(),
+                                input.getCurrency(),
+                                splitPay,
+                                input.getAccounts(),
+                                error
+                            )
+                    );
+                    account.getTransactions().add(
+                            new SplitPaymentTransaction(
+                                input.getTimestamp(),
+                                "Split payment of "
+                                        + BigDecimal.valueOf(
+                                                input.getAmount()
+                                ).setScale(
+                            2,
+                                     RoundingMode.HALF_UP
+                                )
+                                + " " + input.getCurrency(),
+                                input.getCurrency(), splitPay,
+                                input.getAccounts(), error
+                            )
+                    );
                 }
             }
         }

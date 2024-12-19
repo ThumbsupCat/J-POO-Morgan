@@ -29,6 +29,9 @@ public final class SetAliasCommand implements Command {
             if (user.getEmail().contentEquals(input.getEmail())) {
                 for (Account account : user.getAccounts()) {
                     if (account.getIBAN().contentEquals(input.getAccount())) {
+                        /*
+                        *   Setting the new Alias to the selected account
+                        */
                         account.setAlias(input.getAlias());
                     }
                 }

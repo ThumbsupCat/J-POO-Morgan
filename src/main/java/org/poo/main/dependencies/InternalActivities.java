@@ -40,6 +40,7 @@ public class InternalActivities {
      */
     public void startActivities() {
         for (CommandInput commandInput : commandInputs) {
+            /* Going through the whole commandInputs array */
             commandProcessor.process(commandInput);
         }
     }

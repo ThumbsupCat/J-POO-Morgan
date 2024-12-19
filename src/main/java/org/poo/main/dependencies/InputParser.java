@@ -43,15 +43,21 @@ public final class InputParser {
     public void parseData() {
         List<User> users = new ArrayList<>();
         List<ExchangeRate> exchangeRates = new ArrayList<>();
-        for (UserInput user : input.getUsers()) {
+        for (UserInput user : input.getUsers()) { /* Creating each user from input */
             users.add(new User(user));
         }
         for (ExchangeInput exchangeRate : input.getExchangeRates()) {
+            /* Parsing exchangeRate from input, adding it to the list*/
             exchangeRates.add(new ExchangeRate(exchangeRate));
         }
+        /* Reversing the rates so it's easier to work with */
         exchangeRates = addReverseRates(exchangeRates);
         InternalActivities bankActivities = new InternalActivities(
-                users, exchangeRates, input.getCommands(), output);
+                users,
+                exchangeRates,
+                input.getCommands(),
+                output
+        );
         bankActivities.startActivities();
     }
 }

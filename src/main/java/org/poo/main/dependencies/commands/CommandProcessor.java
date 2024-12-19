@@ -68,6 +68,10 @@ public final class CommandProcessor {
         if (commandName == null || !commandClassMap.containsKey(commandName)) {
             return;
         }
+        /*
+         *   Picking the right commandClass and executing it
+         *   Command Pattern used
+         */
         try {
             final Command commandClass = commandClassMap.get(commandName);
             commandClass.execute(command, users, exchangeRates);

@@ -4,7 +4,7 @@ import org.poo.fileio.CommandInput;
 import org.poo.main.dependencies.ExchangeRate;
 import org.poo.main.dependencies.commands.Command;
 import org.poo.main.dependencies.commands.executes.transactionhelper.ErrorTransaction;
-import org.poo.main.dependencies.commands.executes.transactionhelper.NewCard;
+import org.poo.main.dependencies.commands.executes.transactionhelper.CardTransaction;
 import org.poo.main.dependencies.userinfo.Account;
 import org.poo.main.dependencies.userinfo.Card;
 import org.poo.main.dependencies.userinfo.User;
@@ -37,12 +37,12 @@ public final class CreateCardCommand implements Command {
                         } else {
                             newCard = new Card(Utils.generateCardNumber(), "active");
                         }
-                        user.getTransactions().add(new NewCard(
+                        user.getTransactions().add(new CardTransaction(
                                 account.getIBAN(), newCard.getCardNumber(),
                                 user.getEmail(), "New card created",
                                 input.getTimestamp()));
                         account.getTransactions().add(
-                                new NewCard(account.getIBAN(), newCard.getCardNumber(),
+                                new CardTransaction(account.getIBAN(), newCard.getCardNumber(),
                                 user.getEmail(), "New card created",
                                 input.getTimestamp())
                         );
@@ -50,7 +50,9 @@ public final class CreateCardCommand implements Command {
                     }
                 }
                 if (!found) {
-                    //This should've been a test case, error message parsed to the user transactions
+                    /* Adding the error in the user transactions list
+                    This should've been a test case, error message parsed to the user transactions
+                    */
                     user.getTransactions().add(
                             new ErrorTransaction(input.getTimestamp(), "Account not found")
                     );

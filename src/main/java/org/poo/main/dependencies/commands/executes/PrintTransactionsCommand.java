@@ -35,9 +35,11 @@ public final class PrintTransactionsCommand implements Command {
                         final List<ExchangeRate> exchangeRates) {
         for (final User user : users) {
             if (user.getEmail().contentEquals(input.getEmail())) {
+                /* Building the output with the needed nodes */
                 ObjectNode node = mapper.createObjectNode();
                 node.put("command", "printTransactions");
                 ArrayNode outputNode = mapper.createArrayNode();
+                /* Going through every transaction and adding it to the output node */
                 for (TransactionHelper transaction : user.getTransactions()) {
                     outputNode.add(transaction.printTransactions());
                 }

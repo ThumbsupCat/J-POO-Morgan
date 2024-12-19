@@ -24,7 +24,8 @@ public final class PrintUsersCommand implements Command {
                         final List<ExchangeRate> exchangeRates) {
         ObjectNode node = mapper.createObjectNode();
         node.put("command", input.getCommand());
-        ArrayNode usersInfo = mapper.createArrayNode();
+        ArrayNode usersInfo = mapper.createArrayNode(); /* List of users' information */
+        /* Going through every user's info in the database and showing the information requested */
         for (User user : users) {
             ObjectNode userNode = mapper.createObjectNode();
             userNode.put("firstName", user.getFirstName());

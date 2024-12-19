@@ -31,11 +31,12 @@ public final class AddInterestCommand implements Command {
      */
     public void execute(final CommandInput input, final List<User> users,
                         final List<ExchangeRate> exchangeRates) {
-        boolean isSavingsAccount = false;
+        boolean isSavingsAccount = false; /* Operation available only on savings accounts */
         for (User user : users) {
             for (Account account : user.getAccounts()) {
                 if (account.getIBAN().contentEquals(input.getAccount())
                         && account.getType().equals("savings")) {
+                    /* Setting the balance since it's a savings account */
                     account.setBalance(
                             account.getBalance() + account.getBalance() * account.getInterestRate()
                     );
@@ -44,6 +45,7 @@ public final class AddInterestCommand implements Command {
             }
         }
         if (!isSavingsAccount) {
+            /* Printing the error in the output */
             ObjectNode node = mapper.createObjectNode();
             node.put("command", "addInterest");
             ObjectNode outputNode = mapper.createObjectNode();

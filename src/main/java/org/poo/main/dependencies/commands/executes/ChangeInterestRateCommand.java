@@ -41,16 +41,23 @@ public final class ChangeInterestRateCommand implements Command {
             for (Account account : user.getAccounts()) {
                 if (account.getIBAN().contentEquals(input.getAccount())
                         && account.getType().equals("savings")) {
+                    /* The account it's of savings type, changing interest rate... */
                     account.setInterestRate(input.getInterestRate());
+                    /* Logging the activity on user transactions */
                     user.getTransactions().add(
-                            new ErrorTransaction(input.getTimestamp(),
+                            /* I recycle the ErrorTransaction layout */
+                            new ErrorTransaction(
+                                    input.getTimestamp(),
                                     "Interest rate of the account changed to "
-                                            + input.getInterestRate()));
+                                            + input.getInterestRate()
+                            )
+                    );
                     isSavingsAccount = true;
                 }
             }
         }
         if (!isSavingsAccount) {
+            /* Printing the error in the output */
             ObjectNode node = mapper.createObjectNode();
             node.put("command", "changeInterestRate");
             ObjectNode outputNode = new ErrorTransaction(

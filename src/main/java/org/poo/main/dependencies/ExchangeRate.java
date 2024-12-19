@@ -56,7 +56,7 @@ public final class ExchangeRate {
      * @param amount       the amount to be converted
      * @param fromCurrency the currency code of the source currency
      * @param toCurrency   the currency code of the target currency
-     * @return the converted amount in the target currency, rounded to 9 decimal places,
+     * @return the converted amount in the target currency, rounded to 15 decimal places,
      * or the original amount if neither a direct nor an indirect conversion is available
      */
     public static double reverseConvert(final List<ExchangeRate> rates,
@@ -66,14 +66,15 @@ public final class ExchangeRate {
         final int base = 10;
         for (ExchangeRate rate1 : rates) {
             if (rate1.getFrom().contentEquals(fromCurrency)
-                    && rate1.getTo().contentEquals(toCurrency)) {
+                    && rate1.getTo().contentEquals(toCurrency)) { /* Direct currency exchange */
                 return Math.ceil(
-                        amount * rate1.getRate() * pow(base, exponent)) / pow(base, exponent
+                        amount * rate1.getRate()
+                        * pow(base, exponent)) / pow(base, exponent
                 );
             }
         }
 
-        for (ExchangeRate rate1 : rates) {
+        for (ExchangeRate rate1 : rates) { /* Currency exchange through a middle currency */
             if (rate1.getFrom().contentEquals(fromCurrency)) {
                 String inBetween = rate1.getTo();
                 double newAmount = amount * rate1.getRate();
@@ -82,7 +83,7 @@ public final class ExchangeRate {
                             && rate2.getTo().contentEquals(toCurrency)) {
                         return Math.ceil(
                                 newAmount * rate2.getRate()
-                                        * pow(base, exponent)) / pow(base, exponent
+                                * pow(base, exponent)) / pow(base, exponent
                         );
                     }
                 }
