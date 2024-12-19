@@ -84,28 +84,28 @@ which runs each command from input by calling <b>CommandProcessor.process(comman
 <b>CommandProcessor</b> handles each command string by assigning one object from the HashMap.
 * <i>Map<String, Command> commandClassMap</i>  - String is the key, Command is the value, in our case the value being a new Command interface child
   * The command processing starts at  
-    >final Command commandClass = commandClassMap.get(commandName);
+    >final Command commandClass = commandClassMap.get(commandName); \
      commandClass.execute(command, users, exchangeRates);
     * commandClass.execute(command, users, exchangeRates) runs the execute function from the Command interface child
       * Commands:
-         >       printUsers         - prints database of users
-         >       printTransactions  - prints transactions of the specified user
-         >       addAccount         - adds a new bank account in the user information
-         >       addFunds           - adds funds to the specified bank account
-         >       createCard         - assignes a new card to a specified account
-         >       createOneTimeCard  - assignes a new one time card to a specified account, uses the same function, but has different type
-         >       deleteAccount      - deletes a bank account based on which user has this bank account
-         >       deleteCard         - delete a card based on its card number mentioned by the input
-         >       setMinBalance      - sets a minimum balance on a specified bank account
-         >       checkCardStatus    - checks the card status with the specified card number
-         >       payOnline          - payment (source -> commerciant)
-         >       sendMoney          - payment (sender -> receiver)
-         >       setAlias           - sets an alias to the account specified in the input
-         >       splitPayment       - payment(splitedPay -> somewhere(don't ask me)), splitedPay is converted to the payer currency so it can be deducted
-         >       addInterest        - adds interest to an account if it's a savings one
-         >       changeInterestRate - changes the interest rate of a savings account
-         >       report             - shows a report of all the transactions of a user in a specified timeframe
-         >       spendingsReport    - shows a report of an account's spendings to commerciants, solely payOnlineCommand outputs on a specified timeframe
+        *    printUsers         - prints database of users 
+        *    printTransactions  - prints transactions of the specified user 
+        *    addAccount         - adds a new bank account in the user information 
+        *    addFunds           - adds funds to the specified bank account 
+        *    createCard         - assignes a new card to a specified account 
+        *    createOneTimeCard  - assignes a new one time card to a specified account, uses the same function, but has different type 
+        *    deleteAccount      - deletes a bank account based on which user has this bank account 
+        *    deleteCard         - delete a card based on its card number mentioned by the input 
+        *    setMinBalance      - sets a minimum balance on a specified bank account 
+        *    checkCardStatus    - checks the card status with the specified card number 
+        *    payOnline          - payment (source -> commerciant) 
+        *    sendMoney          - payment (sender -> receiver) 
+        *    setAlias           - sets an alias to the account specified in the input 
+        *    splitPayment       - payment(splitedPay -> somewhere(don't ask me)), splitedPay is converted to the payer currency so it can be deducted 
+        *    addInterest        - adds interest to an account if it's a savings one 
+        *    changeInterestRate - changes the interest rate of a savings account 
+        *    report             - shows a report of all the transactions of a user in a specified timeframe 
+        *    spendingsReport    - shows a report of an account's spendings to commerciants, solely payOnlineCommand outputs on a specified timeframe 
         \
       general explanation (for more information, check the javadoc for each Command class, or the comments in the implementation)
 
